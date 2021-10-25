@@ -27,6 +27,7 @@ function Image(props){
 }
 
 function Gallery(props){
+    console.log(props);
     if(props.urls == null){
         return <Loading />;
     }
@@ -48,6 +49,43 @@ function Gallery(props){
     )
 }
 
+
+
+function Form(props){
+
+    function handleSubmit(event) {
+        event.preventDefault();
+        console.log(event.target.value)
+        const { breed } = event.target;
+        // console.log(breed);
+        props.onFormSubmit(breed.value);
+    
+      }
+
+    return(
+    
+        <>
+        <form onSubmit={handleSubmit}>
+            <div className="field has-addons">
+                    <div className="control is-expanded">
+                        <div className="select is-fullwidth">
+                            <select name="breed" defaultValue="shiba">
+                                <option value="shiba">Shiba</option>
+                                <option value="akita">Akita</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="control">
+                        <button type="submit" className="button is-dark">
+                        Reload
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </>
+    )
+}
+
 function Main(){
     // const urls = [
     //     "https://images.dog.ceo/breeds/shiba/shiba-11.jpg",
@@ -66,20 +104,27 @@ function Main(){
     //const urls = null;
 
     //useStateをすることで、「setLoveDogsUrls（target）」という関数でtarget(state)更新をできるようになる。
-    const [urls,setLoveDogsUrls] = useState(null);
+    const [urls,setUrls] = useState(null);
     useEffect(() => {//useEffect の第 1 引数には、副作用を起こす関数を渡します。
         fetchImages("shiba").then((urls) => {
-          console.log(urls);
-          setLoveDogsUrls(urls);
-          
+          setUrls(urls);          
         });
       }, []);//useEffect の第 2 引数には、その副作用が依存する値のリストを配列で渡す。
+
+      function reloadImages(breed){
+          fetchImages(breed).then((urls) => {
+              console.log("おう")
+              console.log(urls)
+
+            setUrls(urls);
+          })
+      }
 
     return(
         <main>
             <section className="section">
                 <div className="container">
-                    <Form />
+                    <Form onFormSubmit={reloadImages}/>
                 </div>
             </section>
             <section className="section">
@@ -96,29 +141,6 @@ function Loading(){
 
 }
 
-function Form(){
-    return(
-        <>
-        <form>
-            <div className="field has-addons">
-                <div className="control is-expanded">
-                    <div className="select is-fullwidth">
-                        <select className="breed" defaultValue="shiba">
-                            <option cvalue="shiba">Shiba</option>
-                            <option cvalue="akita">Akita</option>
-                        </select>
-                    </div>
-                </div>
-                <div className="control">
-                    <button type="submit" className="button is-dark">
-                    Reload
-                    </button>
-                </div>
-            </div>
-        </form>
-        </>
-    )
-}
 
 function Footer(){
     return(
